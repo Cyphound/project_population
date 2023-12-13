@@ -27,20 +27,20 @@ class Poblacion:
         crecimiento = self.poblacion * math.exp(self.tasa_crecimiento * tiempo)
         return crecimiento
 
-    def afectar_crecimiento(self, intensidad_enfermedad, tiempo_enfermedad, poblacion):
+    def afectar_crecimiento(self, intensidad, tiempo, poblacion):
         """
-        Afecta el crecimiento de la población debido a una enfermedad.
+        Afecta el crecimiento de la población debido a diversos factores.
 
         Args:
-        - intensidad_enfermedad (float): Intensidad de la enfermedad.
-        - tiempo_enfermedad (float): Tiempo durante el cual la enfermedad afecta la población.
+        - intensidad (float): Intensidad del factor externo.
+        - tiempo (float): Tiempo durante el cual el factor afecta la población.
         - poblacion (float): Población actual.
 
         Returns:
-        - float: Población afectada después de aplicar el factor de la enfermedad.
+        - float: Población afectada después de aplicar el factor externo.
         """
-        factor_enfermedad = math.exp(-intensidad_enfermedad * tiempo_enfermedad)
-        self.poblacion = self.poblacion * factor_enfermedad
+        factor = math.exp(intensidad * tiempo)
+        self.poblacion = self.poblacion * factor
         return self.poblacion
     
 # Main
@@ -53,7 +53,7 @@ if estado:
     # Parámetros iniciales
     poblacion_inicial = 10
     tasa_crecimiento = 0.6
-    intensidad_enfermedad = 0.3
+    intensidad_enfermedad = -0.3
     tiempo_enfermedad = 5
     tiempo_simulado = 10
 
@@ -77,7 +77,7 @@ if estado:
         # Afectar el crecimiento debido a la enfermedad
         if j < tiempo_enfermedad:
             poblacion_obj.afectar_crecimiento(intensidad_enfermedad, j, crecimiento_simulado)
-            print(f"Población afectada por enfermedad: {round(poblacion_obj.poblacion)}, después de {j} meses")
+            #print(f"Población afectada por enfermedad: {round(poblacion_obj.poblacion)}, después de {j} meses")
             j += 1
 
         # Calcular el crecimiento exponencial para el próximo mes
