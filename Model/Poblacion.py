@@ -1,55 +1,87 @@
 import math
-from Efectos import Efecto
+import time
+from os import system
 
 class Poblacion:
-    def __init__(self, tiempo, tasaCrecimiento): 
-        self.__tiempo = tiempo
-        self.__tasaCrecimiento = tasaCrecimiento
-        self.__poblacionInicial = 2
-        self.__efecto = None
+    def __init__(self, poblacion_inicial, tasa_crecimiento):
+        """
+        Inicializa la clase Poblacion con la población inicial y la tasa de crecimiento.
 
-    # Getters
-    def getTiempo(self):
-        return self.__tiempo
-    def getTasaCrecimiento(self):
-        return self.__tasaCrecimiento
-    def getPoblacionInicial(self):
-        return self.__poblacionInicial
-    def getEfecto(self):
-        return self.__efecto
-    
-    # Setters
-    def setTiempo(self, tiempo):
-        self.__tiempo = tiempo
-    def setTasaCrecimiento(self, tasaCrecimiento):
-        self.__tasaCrecimiento = tasaCrecimiento
-    def setPoblacionInicial(self, poblacionInicial):
-        self.__poblacionInicial = poblacionInicial
-    def setEfecto(self, efecto):
-        self.__efecto = efecto
+        Args:
+        - poblacion_inicial (float): Población inicial.
+        - tasa_crecimiento (float): Tasa de crecimiento.
+        """
+        self.poblacion = poblacion_inicial
+        self.tasa_crecimiento = tasa_crecimiento
 
-    # Metodos
-    def __str__(self):
-        return f"Tiempo: {self.__tiempo},
-        \nTasa de crecimiento: {self.__tasaCrecimiento}\nPoblacion inicial: {self.__poblacionInicial}"
-    
-    def simularCrecimiento(self, tasa = None, inicio = None, fin = None):
-        if tasa is not None and inicio is not None and fin is not None:
-            self.__efecto = Efecto(tasa, inicio, fin)
-        poblacion = self.__poblacionInicial * math.exp(self.__tasaCrecimiento * self.__tiempo)
-        poblacion = self.__efecto.calcularCrecimiento(poblacion, self.__tiempo)
-        return round(poblacion)
+    def crecimiento_exponencial(self, tiempo):
+        """
+        Calcula el crecimiento exponencial de la población en función del tiempo.
 
-    def mostrarPoblacion(self):
-        return f"Despues de {self.__tiempo} meses, la poblacion sera de {self.simularCrecimiento()} habitantes"
+        Args:
+        - tiempo (float): Tiempo para el cual se calcula el crecimiento.
+
+        Returns:
+        - float: Crecimiento exponencial en el tiempo dado.
+        """
+        crecimiento = self.poblacion * math.exp(self.tasa_crecimiento * tiempo)
+        return crecimiento
+
+    def afectar_crecimiento(self, intensidad_enfermedad, tiempo_enfermedad, poblacion):
+        """
+        Afecta el crecimiento de la población debido a una enfermedad.
+
+        Args:
+        - intensidad_enfermedad (float): Intensidad de la enfermedad.
+        - tiempo_enfermedad (float): Tiempo durante el cual la enfermedad afecta la población.
+        - poblacion (float): Población actual.
+
+        Returns:
+        - float: Población afectada después de aplicar el factor de la enfermedad.
+        """
+        factor_enfermedad = math.exp(-intensidad_enfermedad * tiempo_enfermedad)
+        self.poblacion = self.poblacion * factor_enfermedad
+        return self.poblacion
     
 # Main
     
-# test = Poblacion(12, 0.8)
-# print (test.mostrarPoblacion())
-    
-enfermedad = Efecto(-0.3, 0, 6)
+# Cambia el valor de la variable estado a True para ejecutar el programa
+estado = False
 
-poblacion = Poblacion(12, 0.7)
+if estado:
 
-print(poblacion.simularCrecimiento(-0.3, 0, 6))
+    # Parámetros iniciales
+    poblacion_inicial = 10
+    tasa_crecimiento = 0.6
+    intensidad_enfermedad = 0.3
+    tiempo_enfermedad = 5
+    tiempo_simulado = 10
+
+    # Crear objeto de la clase Poblacion
+    poblacion_obj = Poblacion(poblacion_inicial, tasa_crecimiento)
+
+    # Calcular crecimiento exponencial para el primer mes
+    crecimiento_simulado = poblacion_obj.crecimiento_exponencial(1)
+
+    # Inicializar contador para el tiempo de enfermedad
+    j = 1
+
+    # Simulación del crecimiento poblacional
+    for i in range(1, tiempo_simulado + 1):
+        system("cls")  # Limpiar la consola
+        print(f"Población después de {i} meses (crecimiento exponencial): {round(crecimiento_simulado)}")
+
+        # Evitar la división por cero al incrementar i en el primer ciclo
+        if i == 1: i += 1
+
+        # Afectar el crecimiento debido a la enfermedad
+        if j < tiempo_enfermedad:
+            poblacion_obj.afectar_crecimiento(intensidad_enfermedad, j, crecimiento_simulado)
+            print(f"Población afectada por enfermedad: {round(poblacion_obj.poblacion)}, después de {j} meses")
+            j += 1
+
+        # Calcular el crecimiento exponencial para el próximo mes
+        crecimiento_simulado = poblacion_obj.crecimiento_exponencial(i)
+
+        # Esperar 1 segundo antes de mostrar la siguiente iteración
+        time.sleep(1)
